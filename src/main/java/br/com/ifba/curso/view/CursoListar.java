@@ -59,6 +59,7 @@ public class CursoListar extends javax.swing.JFrame {
         btnExcluir = new javax.swing.JButton();
         btnTeste = new javax.swing.JButton();
         jOptionPane1 = new javax.swing.JOptionPane();
+        btnPesquisar = new javax.swing.JButton();
 
         JFrameADDcurso.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         JFrameADDcurso.getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 71, 310, 36));
@@ -210,6 +211,14 @@ public class CursoListar extends javax.swing.JFrame {
         });
         getContentPane().add(jOptionPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 250, -1, -1));
 
+        btnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/META-INF/image-removebg-preview (3) (1).png"))); // NOI18N
+        btnPesquisar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnPesquisar, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 0, 55, 43));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -282,6 +291,10 @@ public class CursoListar extends javax.swing.JFrame {
         jOptionPane1.setVisible(false);
     }//GEN-LAST:event_jOptionPane1MouseClicked
 
+    private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnPesquisarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -323,6 +336,7 @@ public class CursoListar extends javax.swing.JFrame {
     private javax.swing.JButton btnConfirmar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnExcluir;
+    private javax.swing.JButton btnPesquisar;
     private javax.swing.JButton btnTeste;
     private javax.swing.JButton btnsalvarAlteracoes;
     private javax.swing.JFrame jFrameEditar;

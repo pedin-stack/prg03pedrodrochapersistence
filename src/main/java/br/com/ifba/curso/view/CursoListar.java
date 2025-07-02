@@ -4,10 +4,15 @@
  */
 package br.com.ifba.curso.view;
 
+import br.com.ifba.curso.DAO.DAO;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
 import br.com.ifba.curso.entity.Curso;
+
+
 /**
  *
  * @author Casa
@@ -18,13 +23,20 @@ public class CursoListar extends javax.swing.JFrame {
 
     int itemSelecionado = -1; // como não consegui fazer a criaçao de botões de maneira dinâmica o user seleciona e a partir disso faz as escolhas 
     boolean confirmarExclusao = false; // para confirmar a exclusao
-    List listaCursos = new ArrayList();
-  
+    List<Curso> listaCursos = new ArrayList();
+    
+    boolean pesquisaFeita = false;
+    
+    private DAO dao = new DAO();//instanciando para a integração com o BD
+    
+
     public CursoListar() {
         initComponents();
         // modelo da tabela
         tableModel = (DefaultTableModel) tblCursos.getModel();
         jOptionPane1.setVisible(false);
+
+        carregarDados();
         
     }
 
@@ -38,33 +50,35 @@ public class CursoListar extends javax.swing.JFrame {
     private void initComponents() {
 
         JFrameADDcurso = new javax.swing.JFrame();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        txtnomeNovo = new javax.swing.JTextField();
+        txtnovoCodigo = new javax.swing.JTextField();
+        txtnovoAluno = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         btnConfirmar = new javax.swing.JButton();
         jFrameEditar = new javax.swing.JFrame();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
+        txteditarNome = new javax.swing.JTextField();
+        txteditarCodigo = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         btnsalvarAlteracoes = new javax.swing.JButton();
+        txteditarqtdAlunos = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblCursos = new javax.swing.JTable();
         btnAdicionar = new javax.swing.JButton();
         txtPesquisa = new javax.swing.JTextField();
         btnEditar = new javax.swing.JButton();
         btnExcluir = new javax.swing.JButton();
-        btnTeste = new javax.swing.JButton();
+        btndesfazerPesquisa = new javax.swing.JButton();
         jOptionPane1 = new javax.swing.JOptionPane();
         btnPesquisar = new javax.swing.JButton();
 
         JFrameADDcurso.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        JFrameADDcurso.getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 71, 310, 36));
-        JFrameADDcurso.getContentPane().add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 161, 310, 34));
-        JFrameADDcurso.getContentPane().add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 241, 310, 36));
+        JFrameADDcurso.getContentPane().add(txtnomeNovo, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 71, 310, 36));
+        JFrameADDcurso.getContentPane().add(txtnovoCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 161, 310, 34));
+        JFrameADDcurso.getContentPane().add(txtnovoAluno, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 241, 310, 36));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setText("Nome");
@@ -87,6 +101,12 @@ public class CursoListar extends javax.swing.JFrame {
         });
         JFrameADDcurso.getContentPane().add(btnConfirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 340, 80, 40));
 
+        txteditarCodigo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txteditarCodigoActionPerformed(evt);
+            }
+        });
+
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel4.setText("Novo nome");
 
@@ -100,6 +120,15 @@ public class CursoListar extends javax.swing.JFrame {
             }
         });
 
+        txteditarqtdAlunos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txteditarqtdAlunosActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel6.setText("Novo código");
+
         javax.swing.GroupLayout jFrameEditarLayout = new javax.swing.GroupLayout(jFrameEditar.getContentPane());
         jFrameEditar.getContentPane().setLayout(jFrameEditarLayout);
         jFrameEditarLayout.setHorizontalGroup(
@@ -109,29 +138,35 @@ public class CursoListar extends javax.swing.JFrame {
                     .addGroup(jFrameEditarLayout.createSequentialGroup()
                         .addGap(32, 32, 32)
                         .addGroup(jFrameEditarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txteditarCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5)
                             .addComponent(jLabel4)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txteditarNome, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txteditarqtdAlunos, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6)))
                     .addGroup(jFrameEditarLayout.createSequentialGroup()
-                        .addGap(150, 150, 150)
+                        .addGap(144, 144, 144)
                         .addComponent(btnsalvarAlteracoes)))
                 .addContainerGap(33, Short.MAX_VALUE))
         );
         jFrameEditarLayout.setVerticalGroup(
             jFrameEditarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jFrameEditarLayout.createSequentialGroup()
-                .addGap(13, 13, 13)
+                .addContainerGap()
                 .addComponent(jLabel4)
+                .addGap(18, 18, 18)
+                .addComponent(txteditarNome, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
+                .addComponent(txteditarCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32)
+                .addComponent(txteditarqtdAlunos, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37)
                 .addComponent(btnsalvarAlteracoes)
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addGap(48, 48, 48))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -196,13 +231,13 @@ public class CursoListar extends javax.swing.JFrame {
         });
         getContentPane().add(btnExcluir, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 40, 55, 43));
 
-        btnTeste.setText("*Preencher tabela*");
-        btnTeste.addActionListener(new java.awt.event.ActionListener() {
+        btndesfazerPesquisa.setText("Desfazer pesquisa");
+        btndesfazerPesquisa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTesteActionPerformed(evt);
+                btndesfazerPesquisaActionPerformed(evt);
             }
         });
-        getContentPane().add(btnTeste, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 60, -1, -1));
+        getContentPane().add(btndesfazerPesquisa, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 10, -1, -1));
 
         jOptionPane1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -222,54 +257,218 @@ public class CursoListar extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void adicionarCurso(String nome, int alunos, int codigo) {
-   
-    Curso novoCurso = new Curso(nome, codigo, alunos);
-   
-    listaCursos.add(novoCurso);
+    public void carregarDados(){
     
-    tableModel.addRow(new Object[]{
-            novoCurso.getNome(),novoCurso. getQuantidadeAlunos(), novoCurso.getCodigoCurso()});
-   
-}
+     tableModel.setRowCount(0);
+    listaCursos.clear();
+    
+    List<Curso> listaCapsula = dao.findAll();//passnado todos os itens do BD  para a lista
+    
+    for (Curso curso : listaCapsula) {
+        listaCursos.add(curso); //passando todos os itens da lista capsula para a lista local
+        tableModel.addRow(new Object[]{
+            curso.getNome(),
+            curso.getCodigoCurso(),
+            curso.getQuantidadeAlunos()
+        });
+    }
+    
+    }
+    
+    public void adicionarCurso(Curso curso) {
 
+        Curso novoCurso = new Curso(curso.getQuantidadeAlunos(), curso.getNome(), curso.getCodigoCurso());//encapsulamento via objeto
+
+        listaCursos.add(novoCurso);//adicionar curso na lista
+
+        tableModel.addRow(new Object[]{
+            novoCurso.getNome(), novoCurso.getCodigoCurso(), novoCurso.getQuantidadeAlunos()});//adicionar curso na Jtable
+        
+        dao.save(curso);//adiciona o curso no banco de dados
+
+    }
+
+    public void editarCurso(Curso cursoEditado) {
+
+        tblCursos.setValueAt(cursoEditado.getNome(), itemSelecionado, 0);//atualizar     
+        tblCursos.setValueAt(cursoEditado.getCodigoCurso(), itemSelecionado, 1);// a
+        tblCursos.setValueAt(cursoEditado.getQuantidadeAlunos(), itemSelecionado, 2);// tabela
+
+        listaCursos.set(itemSelecionado, cursoEditado);//atualizo a lista
+        
+        dao.update(cursoEditado);//atualizo no  BD
+
+    }
+
+    public void resetarSeleçao() {
+        itemSelecionado = -1;// 'deselecionar' toda vez que encerrar uma ação
+    }
+    
+    public void limparcaixadeTexto(){
+    
+        txtnomeNovo.setText("");//limapando as...
+        txtnovoCodigo.setText("");// ...caixas de ...
+        txtnovoAluno.setText("");// ...texto
+    
+    }
+    
+
+    
     private void txtPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPesquisaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtPesquisaActionPerformed
 
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
+
         JFrameADDcurso.setVisible(true);
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
     private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
+
+        Curso capsulaCurso = new Curso(Integer.parseInt(txtnovoAluno.getText()), txtnomeNovo.getText(), Integer.parseInt(txtnovoCodigo.getText()));//criando um obleto para passar os parametros tanto na lsita qunato na tabela
+
+        for (Curso curso : listaCursos) {
+
+            if (curso.getCodigoCurso() == capsulaCurso.getCodigoCurso()) {//verificar incidencia de repetições
+
+                jOptionPane1.showMessageDialog(null, "Código já existente, não foi possível adicionar o novo curso");
+
+                return;
+            }
+
+        }
+
+        adicionarCurso(capsulaCurso);
+
+       limparcaixadeTexto();
+
         JFrameADDcurso.setVisible(false);
+
+        resetarSeleçao();
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+
+        if (listaCursos.isEmpty()) {
+
+            jOptionPane1.showMessageDialog(null, "Nenhum curso cadastrado");
+
+            return;
+        }
+
+        if (itemSelecionado == -1) {
+
+            jOptionPane1.showMessageDialog(null, "Nenhum curso Selecionado");
+
+            return;
+        }
+
         jFrameEditar.setVisible(true);
     }//GEN-LAST:event_btnEditarActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
 
-        Curso cursoExcluir = (Curso) listaCursos.get(itemSelecionado);
-        
-        jOptionPane1.showMessageDialog(null, "Deseja realizar a exclusão do curso:" +cursoExcluir.toString()+"?");
-        
+        if (listaCursos.isEmpty()) {//verificar existencia de itens na lista
+
+            jOptionPane1.showMessageDialog(null, "Nenhum curso cadastrado");
+
+            return;
+        }
+
+        if (itemSelecionado == -1) {//ver se o user selecionou algo
+
+            jOptionPane1.showMessageDialog(null, "Nenhum curso Selecionado");
+
+            return;
+        }
+
+        Curso cursoExcluir = listaCursos.get(itemSelecionado);
+
+        int resposta = JOptionPane.showConfirmDialog(
+                this,
+                "Deseja realmente excluir o curso:\n" + cursoExcluir.toString() + "?",
+                "Confirmação de exclusão",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (resposta == JOptionPane.YES_OPTION) {
+            listaCursos.remove(itemSelecionado);
+            tableModel.removeRow(itemSelecionado);
+            dao.delete(cursoExcluir.getCodigoCurso());
+            
+            resetarSeleçao();
+        }
+
     }//GEN-LAST:event_btnExcluirActionPerformed
 
     private void btnsalvarAlteracoesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsalvarAlteracoesActionPerformed
+
+        if (listaCursos.isEmpty()) {
+
+            jOptionPane1.showMessageDialog(null, "Nenhum curso cadastrado");
+
+            return;
+        }
+
+        if (itemSelecionado == -1) {
+
+            jOptionPane1.showMessageDialog(null, "Nenhum curso Selecionado");
+
+            return;
+        }
+
+        Curso cursoBackup = listaCursos.get(itemSelecionado);//armazenar as informações do objeto original
+
+        if (txteditarNome.getText().equals("")) {//se não houver alterações vai manter o original
+
+            txteditarNome.setText(cursoBackup.getNome());
+
+        }
+
+        if (txteditarqtdAlunos.getText().equals("")) {//se não houver alterações vai manter o original
+
+            txteditarqtdAlunos.setText(String.valueOf(cursoBackup.getQuantidadeAlunos()));
+
+        }
+
+        if (txteditarCodigo.getText().equals("")) {//se não houver alterações vai manter o original
+
+            txteditarCodigo.setText(String.valueOf(cursoBackup.getCodigoCurso()));
+
+        }
+
+        Curso capsulaCurso = new Curso(Integer.parseInt(txteditarqtdAlunos.getText()), txteditarNome.getText(), Integer.parseInt(txteditarCodigo.getText())); //guardar as informações do objeto selecionado para a capsula
+
+        editarCurso(capsulaCurso);
+
         jFrameEditar.setVisible(false);
+
+       limparcaixadeTexto();
+
+        resetarSeleçao();
+
     }//GEN-LAST:event_btnsalvarAlteracoesActionPerformed
 
-    private void btnTesteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTesteActionPerformed
-        
-        adicionarCurso("Análisie e Desenvolvimento de Sistemas", 91, 90);
-        adicionarCurso("Manutenção industrial", 45, 62);
-        adicionarCurso("Letras", 78, 35);
-        
-       
-        
-    }//GEN-LAST:event_btnTesteActionPerformed
+    private void btndesfazerPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndesfazerPesquisaActionPerformed
+
+        if (listaCursos.isEmpty()) {
+            jOptionPane1.showMessageDialog(null, "Nenhum curso cadastrado");
+            return;
+        }
+
+        tableModel.setRowCount(0);//limpar tabela para aparecer os itens pesquisados
+
+        for (Curso curso : listaCursos) {
+            tableModel.addRow(new Object[]{
+                curso.getNome(),
+                curso.getCodigoCurso(),
+                curso.getQuantidadeAlunos()
+            });
+        }//preencher a tabela com os itens correspondentes
+
+        pesquisaFeita = false;
+        txtPesquisa.setText("");
+    }//GEN-LAST:event_btndesfazerPesquisaActionPerformed
 
     private void tblCursosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCursosMouseClicked
         itemSelecionado = tblCursos.getSelectedRow();//para registrar que linha foi selecionada
@@ -277,23 +476,57 @@ public class CursoListar extends javax.swing.JFrame {
 
     private void jOptionPane1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jOptionPane1MouseClicked
 
-        confirmarExclusao = true;
 
-        if (confirmarExclusao == true) {
-
-            listaCursos.remove(itemSelecionado);
-
-            tblCursos.removeRowSelectionInterval(itemSelecionado, itemSelecionado);//remover apenas a linha selecionada
-
-        }
-
-        confirmarExclusao = false;
-        jOptionPane1.setVisible(false);
     }//GEN-LAST:event_jOptionPane1MouseClicked
 
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
-        // TODO add your handling code here:
+
+        if (txtPesquisa.getText().isEmpty()) {
+        jOptionPane1.showMessageDialog(null, "Caixa de pesquisa vazia");
+        return;
+    }
+
+    String termo = txtPesquisa.getText().trim().toLowerCase();
+    tableModel.setRowCount(0); // limpa a tabela
+
+    try {
+        //procura primeiro pelo ID
+        long codigo = Integer.parseInt(termo);
+        Curso resultado = dao.findById(codigo);
+        if (resultado != null) {
+            tableModel.addRow(new Object[]{
+                resultado.getNome(),
+                resultado.getCodigoCurso(),
+                resultado.getQuantidadeAlunos()
+            });
+        } else {
+            jOptionPane1.showMessageDialog(null, "Nenhum curso encontrado com esse código.");
+        }
+
+    } catch (NumberFormatException e) {
+        //se não for numerico vai pelo nome   
+        List<Curso> resultados = dao.findByName(termo);//crio uma lista para receber os cursos, pois varios cursos podem ter o mesmo nome
+        if (resultados.isEmpty()) {
+            jOptionPane1.showMessageDialog(null, "Nenhum curso encontrado com esse nome.");
+        } else {
+            for (Curso curso : resultados) {
+                tableModel.addRow(new Object[]{
+                    curso.getNome(),
+                    curso.getCodigoCurso(),
+                    curso.getQuantidadeAlunos()
+                });
+            }
+        }
+    }  
     }//GEN-LAST:event_btnPesquisarActionPerformed
+
+    private void txteditarCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txteditarCodigoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txteditarCodigoActionPerformed
+
+    private void txteditarqtdAlunosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txteditarqtdAlunosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txteditarqtdAlunosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -337,7 +570,7 @@ public class CursoListar extends javax.swing.JFrame {
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnPesquisar;
-    private javax.swing.JButton btnTeste;
+    private javax.swing.JButton btndesfazerPesquisa;
     private javax.swing.JButton btnsalvarAlteracoes;
     private javax.swing.JFrame jFrameEditar;
     private javax.swing.JLabel jLabel1;
@@ -345,14 +578,16 @@ public class CursoListar extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
     private javax.swing.JTable tblCursos;
     private javax.swing.JTextField txtPesquisa;
+    private javax.swing.JTextField txteditarCodigo;
+    private javax.swing.JTextField txteditarNome;
+    private javax.swing.JTextField txteditarqtdAlunos;
+    private javax.swing.JTextField txtnomeNovo;
+    private javax.swing.JTextField txtnovoAluno;
+    private javax.swing.JTextField txtnovoCodigo;
     // End of variables declaration//GEN-END:variables
 }

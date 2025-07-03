@@ -284,7 +284,7 @@ public class CursoListar extends javax.swing.JFrame {
     
     public void adicionarCurso(Curso curso) {
 
-        Curso novoCurso = new Curso(curso.getAtivo(), curso.getNome(), curso.getCodigoCurso());//encapsulamento via objeto
+        Curso novoCurso = new Curso( curso.getNome(), curso.getCodigoCurso(), curso.getAtivo());//encapsulamento via objeto
 
         listaCursos.add(novoCurso);//adicionar curso na lista
 
@@ -359,7 +359,7 @@ public class CursoListar extends javax.swing.JFrame {
 
     private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
 
-        Curso capsulaCurso = new Curso(verificarstatusCriar(),txtnomeNovo.getText(),txtnovoCodigo.getText());//criando um obleto para passar os parametros tanto na lsita qunato na tabela
+        Curso capsulaCurso = new Curso(txtnomeNovo.getText(),txtnovoCodigo.getText(),verificarstatusCriar());//criando um obleto para passar os parametros tanto na lsita qunato na tabela
 
         for (Curso curso : listaCursos) {
 
@@ -420,7 +420,7 @@ public class CursoListar extends javax.swing.JFrame {
 
         int resposta = JOptionPane.showConfirmDialog(
                 this,
-                "Deseja realmente excluir o curso:\n" + cursoExcluir.toString() + "?",
+                "Deseja realmente excluir o curso:\n" + cursoExcluir.getNome()+ "?",
                 "Confirmação de exclusão",
                 JOptionPane.YES_NO_OPTION
         );
@@ -471,7 +471,7 @@ public class CursoListar extends javax.swing.JFrame {
 
         }
 
-        Curso capsulaCurso = new Curso(verificarstatusEditar(), txteditarNome.getText(), txteditarCodigo.getText()); //guardar as informações do objeto selecionado para a capsula
+        Curso capsulaCurso = new Curso(txteditarNome.getText(), txteditarCodigo.getText(),verificarstatusEditar()); //guardar as informações do objeto selecionado para a capsula
 
         editarCurso(capsulaCurso);
 

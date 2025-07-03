@@ -9,39 +9,30 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "cursos")
-public class Curso extends PersistenceEntity {  // Mantém herança essencial
+@Table(name = "curso") // Nome da tabela no banco de dados
+public class Curso extends PersistenceEntity { 
 
-    @Column(name = "ativo", nullable = true)
-    private boolean ativo;
-    
     @Column(name = "nome", nullable = false)
     private String nome;
-   
+
     @Column(name = "codigo_curso", nullable = false, unique = true)
     private String codigoCurso;
 
-    public Curso(boolean ativo , String nome, String codigoCurso) {
-        this.ativo = ativo;
-        this.nome = nome;
-        this.codigoCurso = codigoCurso;
-    }
+    @Column(name = "ativo")
+    private boolean ativo = true; // Valor padrão
 
+    // Construtor padrão (obrigatório para JPA)
     public Curso() {
     }
-    
-    @Override
-    public String toString() {
-        return this.nome;
-    }
-    public boolean getAtivo() {
-        return ativo;
-    }
 
-    public void setAtivo(boolean aitvo) {
+    // Construtor com campos
+    public Curso(String nome, String codigoCurso, boolean ativo) {
+        this.nome = nome;
+        this.codigoCurso = codigoCurso;
         this.ativo = ativo;
     }
 
+    // Getters e Setters
     public String getNome() {
         return nome;
     }
@@ -54,7 +45,15 @@ public class Curso extends PersistenceEntity {  // Mantém herança essencial
         return codigoCurso;
     }
 
-    public void setCodigoCurso(String codigoCurso) {  // Tipo alterado para long
+    public void setCodigoCurso(String codigoCurso) {
         this.codigoCurso = codigoCurso;
+    }
+
+    public boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 }

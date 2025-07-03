@@ -3,42 +3,43 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package br.com.ifba.curso.entity;
-import jakarta.persistence.*;
-/**
- *
- * @author Casa
- */
+import br.com.ifba.infrastructure.entity.PersistenceEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
 @Entity
 @Table(name = "cursos")
-public class Curso {
-    
-    @Column (name = "qtd_alunos",nullable = true)
-    private int quantidadeAlunos;
+public class Curso extends PersistenceEntity {  // Mantém herança essencial
+
+    @Column(name = "ativo", nullable = true)
+    private boolean ativo;
     
     @Column(name = "nome", nullable = false)
     private String nome;
-    
-    @Id
+   
     @Column(name = "codigo_curso", nullable = false, unique = true)
-    private int codigoCurso;
+    private String codigoCurso;
 
-    public Curso(String nome, int quantidadeAlunos, int codigoCurso) {
-        this.quantidadeAlunos = quantidadeAlunos;
+    public Curso(boolean ativo , String nome, String codigoCurso) {
+        this.ativo = ativo;
         this.nome = nome;
         this.codigoCurso = codigoCurso;
     }
 
+    public Curso() {
+    }
+    
     @Override
     public String toString() {
         return this.nome;
     }
-
-    public int getQuantidadeAlunos() {
-        return quantidadeAlunos;
+    public boolean getAtivo() {
+        return ativo;
     }
 
-    public void setQuantidadeAlunos(int quantidadeAlunos) {
-        this.quantidadeAlunos = quantidadeAlunos;
+    public void setAtivo(boolean aitvo) {
+        this.ativo = ativo;
     }
 
     public String getNome() {
@@ -49,14 +50,11 @@ public class Curso {
         this.nome = nome;
     }
 
-    public int getCodigoCurso() {
+    public String getCodigoCurso() {
         return codigoCurso;
     }
 
-    public void setCodigoCurso(int codigoCurso) {
+    public void setCodigoCurso(String codigoCurso) {  // Tipo alterado para long
         this.codigoCurso = codigoCurso;
     }
-     
- 
-    
 }

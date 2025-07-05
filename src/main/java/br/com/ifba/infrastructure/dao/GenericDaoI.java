@@ -19,5 +19,5 @@ public interface GenericDaoI<T extends PersistenceEntity> {
     T update(T entity);
     void delete(T entity);
     List<T> findAll();
-    T findById(long id);
+    T findById(Long id);
 }

@@ -11,6 +11,7 @@ package br.com.ifba.infrastructure.dao;
 import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
@@ -34,18 +35,25 @@ public class GenericDao<T extends PersistenceEntity> implements GenericDaoI<T> {
 
     @Override
     public T update(T entity) {
-        em.getTransaction().begin();
-        em.merge(entity);
-        em.getTransaction().commit();
-        return entity;
-    }
-
+    EntityTransaction tx = em.getTransaction();
+    tx.begin();
+    T managed = em.merge(entity);
+    tx.commit();
+    return managed;// esta funçao é por que o hibernate não reconhec como já existente, ele pode acabar fazendo um insert em vez de um update.
+}
+ 
     @Override
-    public void delete(T entity) {
-        entity = findById(entity.getId());
-        em.getTransaction().begin();
-        em.remove(entity);
-        em.getTransaction().commit();
+      public void delete(T entity) {
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();//tratamento de exceção para reverter a transação em caso de erro
+            T managedEntity = em.merge(entity);  // mesclagem antes de anexar o conteúdo
+            em.remove(managedEntity);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
+        }
     }
 
     @Override
@@ -54,7 +62,7 @@ public class GenericDao<T extends PersistenceEntity> implements GenericDaoI<T> {
     }
 
     @Override
-    public T findById(long id) {
+    public T findById(Long id) {
         return em.find(getTypeClass(), id);
     }
 

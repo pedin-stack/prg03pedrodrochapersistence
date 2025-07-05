@@ -249,7 +249,7 @@ public class CursoListar extends javax.swing.JFrame {
             tableModel.addRow(new Object[]{
                 curso.getNome(),
                 curso.getCodigoCurso(),
-                verificarStatus(curso.getAtivo()),
+                formatarStatus(curso.getAtivo()),
                 curso.getAlunosMatriculados()
             });
         }
@@ -263,7 +263,7 @@ public class CursoListar extends javax.swing.JFrame {
         listaCursos.add(novoCurso);//adicionar curso na lista
 
         tableModel.addRow(new Object[]{
-            novoCurso.getNome(), novoCurso.getCodigoCurso(), verificarStatus(novoCurso.getAtivo()),novoCurso.getAlunosMatriculados()});//adicionar curso na Jtable
+            novoCurso.getNome(), novoCurso.getCodigoCurso(), formatarStatus(novoCurso.getAtivo()),novoCurso.getAlunosMatriculados()});//adicionar curso na Jtable
 
         dao.save(curso);//adiciona o curso no banco de dados
 
@@ -273,7 +273,7 @@ public class CursoListar extends javax.swing.JFrame {
 
         tblCursos.setValueAt(cursoEditado.getNome(), itemSelecionado, 0);//atualizar     
         tblCursos.setValueAt(cursoEditado.getCodigoCurso(), itemSelecionado, 1);// a
-        tblCursos.setValueAt(verificarStatus(cursoEditado.getAtivo()), itemSelecionado,2);// tabela
+        tblCursos.setValueAt(formatarStatus(cursoEditado.getAtivo()), itemSelecionado,2);// tabela
         tblCursos.setValueAt(cursoEditado.getAlunosMatriculados(), itemSelecionado, 3);
         
         listaCursos.set(itemSelecionado, cursoEditado);//atualizo a lista
@@ -291,11 +291,12 @@ public class CursoListar extends javax.swing.JFrame {
         txtnomeNovo.setText("");//limapando as...
         txtnovosAlunos.setText("");// ...caixas de texto
         txtnovoCodigo.setText("");
+        txteditarAlunos.setText("");
     }
 
-    public boolean verificarstatusCriar() {
-
-        String selecao = (String) cbnovoStatus.getSelectedItem();
+    public boolean verificarStatusComboBox(javax.swing.JComboBox<String> comboBox){//refatorei as duas funções em apenas uma
+    
+    String selecao = (String) comboBox.getSelectedItem();
 
         if (selecao.equals("Ativo")) {
 
@@ -304,25 +305,11 @@ public class CursoListar extends javax.swing.JFrame {
 
             return false;
         }
-
+        
     }
-
-    public boolean verificarstatusEditar() {
-
-        String selecao = (String) cbEditar.getSelectedItem();
-
-        if ( selecao!=null  && selecao.equals("Ativo")) {
-
-            return true;
-        } else {
-
-            return false;
-        }
-
-    }
-
+    
     //para não ficar aparecendo na tabela 'true' ou 'false'
-    public String verificarStatus(boolean status) {
+    public String formatarStatus(boolean status) {
 
         if (status) {
 
@@ -344,7 +331,7 @@ public class CursoListar extends javax.swing.JFrame {
 
     private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
 
-  Curso capsulaCurso = new Curso(txtnomeNovo.getText(), Long.parseLong(txtnovoCodigo.getText()), verificarstatusCriar(),Integer.parseInt(txtnovosAlunos.getText()));//criando um obleto para passar os parametros tanto na lsita qunato na tabela
+  Curso capsulaCurso = new Curso(txtnomeNovo.getText(), Long.parseLong(txtnovoCodigo.getText()), verificarStatusComboBox(cbnovoStatus),Integer.parseInt(txtnovosAlunos.getText()));//criando um obleto para passar os parametros tanto na lsita qunato na tabela
 
         for (Curso curso : listaCursos) {
 
@@ -436,24 +423,22 @@ if (itemSelecionado == -1) {
 
 Curso cursoSelecionado = listaCursos.get(itemSelecionado);
 
-if (!txteditarNome.getText().isEmpty()) {//diferente de vazio
+if (txteditarNome.getText().isEmpty()) {//estando o espaçao vazio manter inalterado
     cursoSelecionado.setNome(txteditarNome.getText());
 }
 
-if (!txteditarAlunos.getText().isEmpty()) {
-    try {
-        int novaQuantidade = Integer.parseInt(txteditarAlunos.getText());
-        cursoSelecionado.setAlunosMatriculados(novaQuantidade);
-    } catch (NumberFormatException e) {
-        jOptionPane1.showMessageDialog(null, "Quantidade inválida! Use apenas números");
-        return;
-    }
+if (txteditarAlunos.getText().isEmpty()) {
+    
+    txteditarAlunos.setText(Integer.toString(cursoSelecionado.getAlunosMatriculados()));
+      
 }
 
-cursoSelecionado.setAtivo(verificarstatusEditar());
+cursoSelecionado.setAtivo(verificarStatusComboBox(cbEditar));
 
         editarCurso(cursoSelecionado);//atualizar tanto a tabela como o bd e a lisyta
 
+        limparcaixadeTexto();
+        
         jFrameEditar.setVisible(false);
         
     }//GEN-LAST:event_btnsalvarAlteracoesActionPerformed
@@ -471,7 +456,7 @@ cursoSelecionado.setAtivo(verificarstatusEditar());
             tableModel.addRow(new Object[]{
                 curso.getNome(),
                 curso.getCodigoCurso(),
-                verificarStatus(curso.getAtivo()),
+                formatarStatus(curso.getAtivo()),
                 curso.getAlunosMatriculados()
             });
         }//preencher a tabela com os itens correspondentes
@@ -508,7 +493,7 @@ cursoSelecionado.setAtivo(verificarstatusEditar());
                 tableModel.addRow(new Object[]{
                     curso.getNome(),
                     curso.getCodigoCurso(),
-                    verificarStatus(curso.getAtivo())
+                    formatarStatus(curso.getAtivo())
                 });
             } else {
                 jOptionPane1.showMessageDialog(null, "Nenhum curso encontrado com esse ID.");
@@ -524,7 +509,7 @@ cursoSelecionado.setAtivo(verificarstatusEditar());
                     tableModel.addRow(new Object[]{
                         curso.getNome(),
                         curso.getCodigoCurso(),
-                        verificarStatus(curso.getAtivo()) // Método para formatar status
+                        formatarStatus(curso.getAtivo()) // Método para formatar status
                     });
                 }
             }

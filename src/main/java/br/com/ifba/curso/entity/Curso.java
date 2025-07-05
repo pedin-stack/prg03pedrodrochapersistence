@@ -17,7 +17,6 @@ public class Curso extends PersistenceEntity {
     @Column(name = "nome", nullable = false)
     private String nome;
     
-    @Id
     @Column(name = "codigo_curso", nullable = false, unique = true)
     private long codigoCurso;
 

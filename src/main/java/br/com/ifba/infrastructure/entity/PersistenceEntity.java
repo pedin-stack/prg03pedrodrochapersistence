@@ -18,7 +18,7 @@ import java.io.Serializable;
 public abstract class PersistenceEntity implements Serializable {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)//pedro do futuro favor não mexer aqui
     private Long id;
 
     public Long getId() {

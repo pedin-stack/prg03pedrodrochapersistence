@@ -1,7 +1,11 @@
-/*
+        /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
+
+/*LEMBRETES:
+1 - fazer uma função 'adicionarnaTabela'
+*/
 package br.com.ifba.curso.view;
 
 import br.com.ifba.curso.dao.dao;
@@ -11,6 +15,8 @@ import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
 import br.com.ifba.curso.entity.Curso;
+import br.com.ifba.curso.util.Verificador;
+import br.com.ifba.curso.util.Output;
 
 /**
  *
@@ -22,8 +28,9 @@ public class CursoListar extends javax.swing.JFrame {
     boolean pesquisaFeita = false;
     int itemSelecionado = -1; // como não consegui fazer a criaçao de botões de maneira dinâmica o user seleciona e a partir disso faz as escolhas 
     List<Curso> listaCursos = new ArrayList();
+    Verificador verificar = new Verificador();
 
-    private dao dao = new dao();//instanciando para a integração com o BD
+   final dao dao = new dao();//instanciando para a integração com o BD
 
     public CursoListar() {
         initComponents();
@@ -257,6 +264,10 @@ public class CursoListar extends javax.swing.JFrame {
     }
 
     public void adicionarCurso(Curso curso) {
+        
+       if( verificar.objetoNulo(curso) == true){
+       return;
+       }
 
         Curso novoCurso = new Curso(curso.getNome(), curso.getCodigoCurso(), curso.getAtivo(),curso.getAlunosMatriculados());//encapsulamento via objeto
 
@@ -363,7 +374,7 @@ public class CursoListar extends javax.swing.JFrame {
         }
 
         if (itemSelecionado == -1) {
-
+            
             jOptionPane1.showMessageDialog(null, "Nenhum curso Selecionado");
 
             return;
@@ -396,7 +407,7 @@ public class CursoListar extends javax.swing.JFrame {
                 "Confirmação de exclusão",
                 JOptionPane.YES_NO_OPTION
         );
-
+                        //0 = sim | 1 = não | -1 = nada
         if (resposta == JOptionPane.YES_OPTION) {
             listaCursos.remove(itemSelecionado);
             tableModel.removeRow(itemSelecionado);

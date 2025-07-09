@@ -28,8 +28,9 @@ public class GenericDao<T extends PersistenceEntity> implements GenericDaoI<T> {
     @Override
     public T save(T entity) {
         em.getTransaction().begin();
-        em.persist(entity);
+        em.merge(entity);//estou usando merge ao inves de persist pois merge consegue adicionar objetos que são detached
         em.getTransaction().commit();
+       // em.close();
         return entity;
     }
 
@@ -39,21 +40,18 @@ public class GenericDao<T extends PersistenceEntity> implements GenericDaoI<T> {
     tx.begin();
     T managed = em.merge(entity);
     tx.commit();
-    return managed;// esta funçao é por que o hibernate não reconhec como já existente, ele pode acabar fazendo um insert em vez de um update.
+    em.close();
+    return managed;// esta funçao é por que o hibernate não reconhece como já existente, ele pode acabar fazendo um insert em vez de um update.
 }
  
     @Override
       public void delete(T entity) {
         EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();//tratamento de exceção para reverter a transação em caso de erro
-            T managedEntity = em.merge(entity);  // mesclagem antes de anexar o conteúdo
+            tx.begin();
+            T managedEntity = em.merge(entity); 
             em.remove(managedEntity);
             tx.commit();
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            throw e;
-        }
+           // em.close();
     }
 
     @Override

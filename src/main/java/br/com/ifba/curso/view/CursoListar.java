@@ -8,6 +8,7 @@
 */
 package br.com.ifba.curso.view;
 
+import br.com.ifba.curso.Controller.CursoController;
 import br.com.ifba.curso.dao.dao;
 
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
 import br.com.ifba.curso.entity.Curso;
-import br.com.ifba.curso.util.Verificador;
-import br.com.ifba.curso.util.Output;
+import br.com.ifba.curso.exceptions.Exceptions;
+import br.com.ifba.infrastructure.util.StringUtil;
 
 /**
  *
@@ -28,7 +29,11 @@ public class CursoListar extends javax.swing.JFrame {
     boolean pesquisaFeita = false;
     int itemSelecionado = -1; // como não consegui fazer a criaçao de botões de maneira dinâmica o user seleciona e a partir disso faz as escolhas 
     List<Curso> listaCursos = new ArrayList();
-    Verificador verificar = new Verificador();
+    
+     StringUtil strUtil = new StringUtil();//injeção da classe String util
+     CursoController cursoController = new CursoController();
+     Exceptions excecoes = new Exceptions();
+    
 
    final dao dao = new dao();//instanciando para a integração com o BD
 
@@ -244,6 +249,19 @@ public class CursoListar extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void preencherTabela(){
+    
+    for (Curso curso : listaCursos) {
+            tableModel.addRow(new Object[]{
+                curso.getNome(),
+                curso.getId(),
+                formatarStatus(curso.getAtivo()),
+                curso.getAlunosMatriculados()
+            });
+        }
+        
+    }
+    
     public void carregarDados() {
 
         tableModel.setRowCount(0);
@@ -255,7 +273,7 @@ public class CursoListar extends javax.swing.JFrame {
             listaCursos.add(curso); //passando todos os itens da lista capsula para a lista local
             tableModel.addRow(new Object[]{
                 curso.getNome(),
-                curso.getCodigoCurso(),
+                curso.getId(),
                 formatarStatus(curso.getAtivo()),
                 curso.getAlunosMatriculados()
             });
@@ -265,31 +283,32 @@ public class CursoListar extends javax.swing.JFrame {
 
     public void adicionarCurso(Curso curso) {
         
-       if( verificar.objetoNulo(curso) == true){
-       return;
-       }
-
-        Curso novoCurso = new Curso(curso.getNome(), curso.getCodigoCurso(), curso.getAtivo(),curso.getAlunosMatriculados());//encapsulamento via objeto
+    if(excecoes.capsuleisNull(curso)){
+    
+    jOptionPane1.showMessageDialog(null, "Não foi possível adicionar o curso");//
+        
+    }
+        Curso novoCurso = new Curso(curso.getNome(), curso.getId(), curso.getAtivo(),curso.getAlunosMatriculados());//encapsulamento via objeto
 
         listaCursos.add(novoCurso);//adicionar curso na lista
 
         tableModel.addRow(new Object[]{
-            novoCurso.getNome(), novoCurso.getCodigoCurso(), formatarStatus(novoCurso.getAtivo()),novoCurso.getAlunosMatriculados()});//adicionar curso na Jtable
+            novoCurso.getNome(), novoCurso.getId(), formatarStatus(novoCurso.getAtivo()),novoCurso.getAlunosMatriculados()});//adicionar curso na Jtable
 
-        dao.save(curso);//adiciona o curso no banco de dados
+        cursoController.save(curso);//passa para a camada controller
 
     }
 
     public void editarCurso(Curso cursoEditado) {
 
         tblCursos.setValueAt(cursoEditado.getNome(), itemSelecionado, 0);//atualizar     
-        tblCursos.setValueAt(cursoEditado.getCodigoCurso(), itemSelecionado, 1);// a
+        tblCursos.setValueAt(cursoEditado.getId(), itemSelecionado, 1);// a
         tblCursos.setValueAt(formatarStatus(cursoEditado.getAtivo()), itemSelecionado,2);// tabela
         tblCursos.setValueAt(cursoEditado.getAlunosMatriculados(), itemSelecionado, 3);
         
         listaCursos.set(itemSelecionado, cursoEditado);//atualizo a lista
 
-        dao.update(cursoEditado);//atualizo no  BD
+       cursoController.update(cursoEditado);//joga para a segunda camada 
 
     }
 
@@ -342,18 +361,23 @@ public class CursoListar extends javax.swing.JFrame {
 
     private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
 
-  Curso capsulaCurso = new Curso(txtnomeNovo.getText(), Long.parseLong(txtnovoCodigo.getText()), verificarStatusComboBox(cbnovoStatus),Integer.parseInt(txtnovosAlunos.getText()));//criando um obleto para passar os parametros tanto na lsita qunato na tabela
-
-        for (Curso curso : listaCursos) {
-
-            if (curso.getCodigoCurso() == capsulaCurso.getCodigoCurso()) {//verificar incidencia de repetições
-
-                jOptionPane1.showMessageDialog(null, "Código já existente, não foi possível adicionar o novo curso");
-
-                return;
-            }
-
+        
+               
+        if(strUtil.isNullOrEmpty(txtnomeNovo.getText())||strUtil.isNullOrEmpty(txtnovoCodigo.getText())||strUtil.isNullOrEmpty(txtnovosAlunos.getText())){//verificar se todos os campos foram preenchidos 
+        
+        jOptionPane1.showMessageDialog(null, "Não foi possível adicionar o curso");
+        
         }
+        
+  Curso capsulaCurso = new Curso(txtnomeNovo.getText(), Long.valueOf(txtnovoCodigo.getText()), verificarStatusComboBox(cbnovoStatus),Integer.parseInt(txtnovosAlunos.getText()));//criando um obleto para passar os parametros tanto na lsita qunato na tabela
+
+         if(excecoes.idisEqual(capsulaCurso.getId())){
+         
+             jOptionPane1.showMessageDialog(null, "Ja existe um curso com esse id");
+         
+         return;
+         }
+
 
         adicionarCurso(capsulaCurso);
 
@@ -366,14 +390,14 @@ public class CursoListar extends javax.swing.JFrame {
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
 
-        if (listaCursos.isEmpty()) {
+        if (excecoes.listIsEmpty(listaCursos)) {
 
             jOptionPane1.showMessageDialog(null, "Nenhum curso cadastrado");
 
             return;
         }
 
-        if (itemSelecionado == -1) {
+        if (!excecoes.cursoIsSelected(itemSelecionado)) {
             
             jOptionPane1.showMessageDialog(null, "Nenhum curso Selecionado");
 
@@ -385,14 +409,14 @@ public class CursoListar extends javax.swing.JFrame {
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
 
-        if (listaCursos.isEmpty()) {//verificar existencia de itens na lista
+        if (excecoes.listIsEmpty(listaCursos)) {//verificar existencia de itens na lista
 
             jOptionPane1.showMessageDialog(null, "Nenhum curso cadastrado");
 
             return;
         }
 
-        if (itemSelecionado == -1) {//ver se o user selecionou algo
+        if (!excecoes.cursoIsSelected(itemSelecionado)) {//ver se o user selecionou algo
 
             jOptionPane1.showMessageDialog(null, "Nenhum curso Selecionado");
 
@@ -411,7 +435,7 @@ public class CursoListar extends javax.swing.JFrame {
         if (resposta == JOptionPane.YES_OPTION) {
             listaCursos.remove(itemSelecionado);
             tableModel.removeRow(itemSelecionado);
-            dao.delete(cursoExcluir);
+            cursoController.delete(cursoExcluir);
 
             resetarSeleçao();
         }
@@ -422,27 +446,28 @@ public class CursoListar extends javax.swing.JFrame {
 
     private void btnsalvarAlteracoesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsalvarAlteracoesActionPerformed
 
-       if (listaCursos.isEmpty()) {
+       if (excecoes.listIsEmpty(listaCursos)) {
     jOptionPane1.showMessageDialog(null, "Nenhum curso cadastrado");
     return;
 }
 
-if (itemSelecionado == -1) {
+if (!excecoes.cursoIsSelected(itemSelecionado)) {
     jOptionPane1.showMessageDialog(null, "Nenhum curso Selecionado");
     return;
 }
 
 Curso cursoSelecionado = listaCursos.get(itemSelecionado);
 
-if (txteditarNome.getText().isEmpty()) {//estando o espaçao vazio manter inalterado
+if(!strUtil.isNullOrEmpty(txteditarNome.getText())){//estando o espaçao vazio manter inalterado
+    
     cursoSelecionado.setNome(txteditarNome.getText());
 }
 
-if (txteditarAlunos.getText().isEmpty()) {
-    
-    txteditarAlunos.setText(Integer.toString(cursoSelecionado.getAlunosMatriculados()));
-      
+if(!strUtil.isNullOrEmpty(txteditarAlunos.getText())){
+
+   cursoSelecionado.setAlunosMatriculados(Integer.parseInt(txteditarAlunos.getText()));
 }
+
 
 cursoSelecionado.setAtivo(verificarStatusComboBox(cbEditar));
 
@@ -456,7 +481,7 @@ cursoSelecionado.setAtivo(verificarStatusComboBox(cbEditar));
 
     private void btndesfazerPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndesfazerPesquisaActionPerformed
 
-        if (listaCursos.isEmpty()) {
+        if (excecoes.listIsEmpty(listaCursos)) {
             jOptionPane1.showMessageDialog(null, "Nenhum curso cadastrado");
             return;
         }
@@ -466,7 +491,7 @@ cursoSelecionado.setAtivo(verificarStatusComboBox(cbEditar));
         for (Curso curso : listaCursos) {
             tableModel.addRow(new Object[]{
                 curso.getNome(),
-                curso.getCodigoCurso(),
+                curso.getId(),
                 formatarStatus(curso.getAtivo()),
                 curso.getAlunosMatriculados()
             });
@@ -487,7 +512,7 @@ cursoSelecionado.setAtivo(verificarStatusComboBox(cbEditar));
 
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
 
-        if (txtPesquisa.getText().isEmpty()) {
+        if (strUtil.isNullOrEmpty(txtPesquisa.getText())) {
             jOptionPane1.showMessageDialog(null, "Caixa de pesquisa vazia");
             return;
         }
@@ -498,12 +523,12 @@ cursoSelecionado.setAtivo(verificarStatusComboBox(cbEditar));
         try {
             //tenta procurar pelo ID
             Long id = Long.parseLong(termo);
-            Curso curso = dao.findById(id);
+            Curso curso = cursoController.findById(id);
 
-            if (curso != null) {
+            if (!excecoes.capsuleisNull(curso)) {
                 tableModel.addRow(new Object[]{
                     curso.getNome(),
-                    curso.getCodigoCurso(),
+                    curso.getId(),
                     formatarStatus(curso.getAtivo())
                 });
             } else {
@@ -513,13 +538,13 @@ cursoSelecionado.setAtivo(verificarStatusComboBox(cbEditar));
             //se não for número, pesquisa por nome
             List<Curso> resultados = dao.findByName(termo);
 
-            if (resultados.isEmpty()) {
+            if (excecoes.listIsEmpty(resultados)) {
                 jOptionPane1.showMessageDialog(null, "Nenhum curso encontrado com esse nome.");
             } else {
                 for (Curso curso : resultados) {
                     tableModel.addRow(new Object[]{
                         curso.getNome(),
-                        curso.getCodigoCurso(),
+                        curso.getId(),
                         formatarStatus(curso.getAtivo()) // Método para formatar status
                     });
                 }

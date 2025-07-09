@@ -11,11 +11,11 @@ import java.util.List;
  */
 public interface CursoControllerI {
     
-     Curso saveCurso(Curso curso);
-    Curso updateCurso(Curso curso);
-    void deleteCurso(Curso curso);
-    List<Curso> getAllCursos();
-    Curso getCursoById(Long id);
-    List<Curso> getCursoByName(String name);
+     Curso save(Curso curso);
+    Curso update(Curso curso);
+    void delete(Curso curso);
+    List<Curso> findAll();
+    Curso findById(Long id);
+    List<Curso> findByName(String name);
     
 }

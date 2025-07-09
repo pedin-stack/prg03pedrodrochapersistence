@@ -3,42 +3,43 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package br.com.ifba.curso.entity;
+
 import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-
 @Entity
 @Table(name = "curso") // Nome da tabela no banco de dados
-public class Curso extends PersistenceEntity { 
+public class Curso extends PersistenceEntity {
 
     @Column(name = "nome", nullable = false)
     private String nome;
-    
-    @Column(name = "codigo_curso", nullable = false, unique = true)
-    private long codigoCurso;
 
-    @Column(name = "ativo")
+    @Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true)
+    private Long id;
+
+    @Column(name = "codigo_curso")
     private boolean ativo = true; // Valor padrão
-    
-    @Column(name = "alunos_matriculados" , nullable = false)
+
+    @Column(name = "alunos_matriculados", nullable = false)
     private int alunosMatriculados;
 
     // Construtor padrão (obrigatório para JPA)
     public Curso() {
     }
 
-    // Construtor com campos
-
-    public Curso(String nome, long codigoCurso, boolean ativo , int alunosMatriculados) {
+    public Curso(String nome, Long id, boolean ativo, int alunosMatriculados) {
         this.nome = nome;
-        this.codigoCurso = codigoCurso;
+        this.id = id;
         this.ativo = ativo;
         this.alunosMatriculados = alunosMatriculados;
     }
-    
 
     // Getters e Setters
     public String getNome() {
@@ -49,16 +50,18 @@ public class Curso extends PersistenceEntity {
         this.nome = nome;
     }
 
-    public long getCodigoCurso() {
-        return codigoCurso;
+    public int getAlunosMatriculados() {
+        return alunosMatriculados;
     }
 
-    public int getAlunosMatriculados(){
-    return alunosMatriculados;
+    @Override
+    public Long getId() {
+        return this.id;
     }
-    
-    public void setCodigoCurso(long codigoCurso) {
-        this.codigoCurso = codigoCurso;
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public boolean getAtivo() {
@@ -68,8 +71,8 @@ public class Curso extends PersistenceEntity {
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
-    
-    public void setAlunosMatriculados(int alunos){
+
+    public void setAlunosMatriculados(int alunos) {
         this.alunosMatriculados = alunos;
     }
 }

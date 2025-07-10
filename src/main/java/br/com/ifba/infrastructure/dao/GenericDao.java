@@ -40,7 +40,7 @@ public class GenericDao<T extends PersistenceEntity> implements GenericDaoI<T> {
     tx.begin();
     T managed = em.merge(entity);
     tx.commit();
-    em.close();
+    //em.close();
     return managed;// esta funçao é por que o hibernate não reconhece como já existente, ele pode acabar fazendo um insert em vez de um update.
 }
  

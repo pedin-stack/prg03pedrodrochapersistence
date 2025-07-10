@@ -20,12 +20,12 @@ public class Curso extends PersistenceEntity {
     private String nome;
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "codigo_curso")
-    private boolean ativo = true; // Valor padrão
+    @Column(name = "codigo_curso",nullable = false)
+    private Boolean ativo = true; // Valor padrão
 
     @Column(name = "alunos_matriculados", nullable = false)
     private int alunosMatriculados;
@@ -34,7 +34,7 @@ public class Curso extends PersistenceEntity {
     public Curso() {
     }
 
-    public Curso(String nome, Long id, boolean ativo, int alunosMatriculados) {
+    public Curso(String nome, Long id, Boolean ativo, int alunosMatriculados) {
         this.nome = nome;
         this.id = id;
         this.ativo = ativo;
@@ -64,11 +64,11 @@ public class Curso extends PersistenceEntity {
         this.id = id;
     }
 
-    public boolean getAtivo() {
-        return ativo;
+    public Boolean getAtivo() {
+        return this.ativo;
     }
 
-    public void setAtivo(boolean ativo) {
+    public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
     }
 

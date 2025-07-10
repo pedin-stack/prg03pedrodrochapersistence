@@ -18,7 +18,7 @@ public class CursoService implements CursoServiceI {
     @Override
     public Curso saveCurso(Curso curso)throws RuntimeException {
         
-        if(excecoes.capsuleisNull(curso)){
+       /* if(excecoes.capsuleisNull(curso)){
         
             throw new RuntimeException ("Dados do curso não preenchidos");  
         
@@ -26,10 +26,10 @@ public class CursoService implements CursoServiceI {
         
         throw new RuntimeException ("ID já existente em outro objeto"); 
             
-        }  */else{
-        
+        }  else{
+        */
         return cursoDao.save(curso);
-        }
+        
     }
 
     @Override

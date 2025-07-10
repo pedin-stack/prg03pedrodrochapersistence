@@ -1,11 +1,11 @@
-        /*
+/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 
-/*LEMBRETES:
+ /*LEMBRETES:
 1 - fazer uma função 'adicionarnaTabela'
-*/
+ */
 package br.com.ifba.curso.view;
 
 import br.com.ifba.curso.Controller.CursoController;
@@ -29,13 +29,12 @@ public class CursoListar extends javax.swing.JFrame {
     boolean pesquisaFeita = false;
     int itemSelecionado = -1; // como não consegui fazer a criaçao de botões de maneira dinâmica o user seleciona e a partir disso faz as escolhas 
     List<Curso> listaCursos = new ArrayList();
-    
-     StringUtil strUtil = new StringUtil();//injeção da classe String util
-     CursoController cursoController = new CursoController();
-     Exceptions excecoes = new Exceptions();
-    
 
-   final dao dao = new dao();//instanciando para a integração com o BD
+    StringUtil strUtil = new StringUtil();//injeção da classe String util
+    CursoController cursoController = new CursoController();
+    Exceptions excecoes = new Exceptions();
+
+    final dao dao = new dao();//instanciando para a integração com o BD
 
     public CursoListar() {
         initComponents();
@@ -190,8 +189,9 @@ public class CursoListar extends javax.swing.JFrame {
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 100, 490, -1));
 
-        btnAdicionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/META-INF/image-removebg-preview (2).png"))); // NOI18N
+        btnAdicionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/image-removebg-preview (2)_1.png"))); // NOI18N
         btnAdicionar.setPreferredSize(new java.awt.Dimension(70, 70));
+        btnAdicionar.setSelectedIcon(new javax.swing.ImageIcon("C:\\Users\\Casa\\Desktop\\Estudos linguagem C\\image-removebg-preview (2).png")); // NOI18N
         btnAdicionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAdicionarActionPerformed(evt);
@@ -206,7 +206,7 @@ public class CursoListar extends javax.swing.JFrame {
         });
         getContentPane().add(txtPesquisa, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 10, 440, -1));
 
-        btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/META-INF/image-removebg-preview (1).png"))); // NOI18N
+        btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/image-removebg-preview (1)_1.png"))); // NOI18N
         btnEditar.setPreferredSize(new java.awt.Dimension(70, 70));
         btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -215,7 +215,7 @@ public class CursoListar extends javax.swing.JFrame {
         });
         getContentPane().add(btnEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 40, 55, 43));
 
-        btnExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/META-INF/image-removebg-preview.png"))); // NOI18N
+        btnExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/image-removebg-preview.png"))); // NOI18N
         btnExcluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnExcluirActionPerformed(evt);
@@ -238,7 +238,7 @@ public class CursoListar extends javax.swing.JFrame {
         });
         getContentPane().add(jOptionPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 250, -1, -1));
 
-        btnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/META-INF/image-removebg-preview (3) (1).png"))); // NOI18N
+        btnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/image-removebg-preview (3) (1).png"))); // NOI18N
         btnPesquisar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPesquisarActionPerformed(evt);
@@ -249,9 +249,9 @@ public class CursoListar extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void preencherTabela(){
-    
-    for (Curso curso : listaCursos) {
+    public void preencherTabela() {
+
+        for (Curso curso : listaCursos) {
             tableModel.addRow(new Object[]{
                 curso.getNome(),
                 curso.getId(),
@@ -259,9 +259,9 @@ public class CursoListar extends javax.swing.JFrame {
                 curso.getAlunosMatriculados()
             });
         }
-        
+
     }
-    
+
     public void carregarDados() {
 
         tableModel.setRowCount(0);
@@ -282,18 +282,18 @@ public class CursoListar extends javax.swing.JFrame {
     }
 
     public void adicionarCurso(Curso curso) {
-        
-    if(excecoes.capsuleisNull(curso)){
-    
-    jOptionPane1.showMessageDialog(null, "Não foi possível adicionar o curso");//
-        
-    }
-        Curso novoCurso = new Curso(curso.getNome(), curso.getId(), curso.getAtivo(),curso.getAlunosMatriculados());//encapsulamento via objeto
+
+        if (excecoes.capsuleisNull(curso)) {
+
+            jOptionPane1.showMessageDialog(null, "Não foi possível adicionar o curso");//
+
+        }
+        Curso novoCurso = new Curso(curso.getNome(), curso.getId(), curso.getAtivo(), curso.getAlunosMatriculados());//encapsulamento via objeto
 
         listaCursos.add(novoCurso);//adicionar curso na lista
 
         tableModel.addRow(new Object[]{
-            novoCurso.getNome(), novoCurso.getId(), formatarStatus(novoCurso.getAtivo()),novoCurso.getAlunosMatriculados()});//adicionar curso na Jtable
+            novoCurso.getNome(), novoCurso.getId(), formatarStatus(novoCurso.getAtivo()), novoCurso.getAlunosMatriculados()});//adicionar curso na Jtable
 
         cursoController.save(curso);//passa para a camada controller
 
@@ -303,12 +303,12 @@ public class CursoListar extends javax.swing.JFrame {
 
         tblCursos.setValueAt(cursoEditado.getNome(), itemSelecionado, 0);//atualizar     
         tblCursos.setValueAt(cursoEditado.getId(), itemSelecionado, 1);// a
-        tblCursos.setValueAt(formatarStatus(cursoEditado.getAtivo()), itemSelecionado,2);// tabela
+        tblCursos.setValueAt(formatarStatus(cursoEditado.getAtivo()), itemSelecionado, 2);// tabela
         tblCursos.setValueAt(cursoEditado.getAlunosMatriculados(), itemSelecionado, 3);
-        
+
         listaCursos.set(itemSelecionado, cursoEditado);//atualizo a lista
 
-       cursoController.update(cursoEditado);//joga para a segunda camada 
+        cursoController.update(cursoEditado);//joga para a segunda camada 
 
     }
 
@@ -324,9 +324,9 @@ public class CursoListar extends javax.swing.JFrame {
         txteditarAlunos.setText("");
     }
 
-    public boolean verificarStatusComboBox(javax.swing.JComboBox<String> comboBox){//refatorei as duas funções em apenas uma
-    
-    String selecao = (String) comboBox.getSelectedItem();
+    public boolean verificarStatusComboBox(javax.swing.JComboBox<String> comboBox) {//refatorei as duas funções em apenas uma
+
+        String selecao = (String) comboBox.getSelectedItem();
 
         if (selecao.equals("Ativo")) {
 
@@ -335,9 +335,9 @@ public class CursoListar extends javax.swing.JFrame {
 
             return false;
         }
-        
+
     }
-    
+
     //para não ficar aparecendo na tabela 'true' ou 'false'
     public String formatarStatus(boolean status) {
 
@@ -361,23 +361,20 @@ public class CursoListar extends javax.swing.JFrame {
 
     private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
 
-        
-               
-        if(strUtil.isNullOrEmpty(txtnomeNovo.getText())||strUtil.isNullOrEmpty(txtnovoCodigo.getText())||strUtil.isNullOrEmpty(txtnovosAlunos.getText())){//verificar se todos os campos foram preenchidos 
-        
-        jOptionPane1.showMessageDialog(null, "Não foi possível adicionar o curso");
-        
+        if (strUtil.isNullOrEmpty(txtnomeNovo.getText()) || strUtil.isNullOrEmpty(txtnovoCodigo.getText()) || strUtil.isNullOrEmpty(txtnovosAlunos.getText())) {//verificar se todos os campos foram preenchidos 
+
+            jOptionPane1.showMessageDialog(null, "Não foi possível adicionar o curso");
+
         }
+
+        Curso capsulaCurso = new Curso(txtnomeNovo.getText(), Long.valueOf(txtnovoCodigo.getText()), verificarStatusComboBox(cbnovoStatus), Integer.parseInt(txtnovosAlunos.getText()));//criando um obleto para passar os parametros tanto na lsita qunato na tabela
+
+        if(excecoes. idisEqual(capsulaCurso.getId())){
         
-  Curso capsulaCurso = new Curso(txtnomeNovo.getText(), Long.valueOf(txtnovoCodigo.getText()), verificarStatusComboBox(cbnovoStatus),Integer.parseInt(txtnovosAlunos.getText()));//criando um obleto para passar os parametros tanto na lsita qunato na tabela
-
-         if(excecoes.idisEqual(capsulaCurso.getId())){
-         
-             jOptionPane1.showMessageDialog(null, "Ja existe um curso com esse id");
-         
+         jOptionPane1.showMessageDialog(null, "Ja existe um curso com esse id");
+            
          return;
-         }
-
+        }
 
         adicionarCurso(capsulaCurso);
 
@@ -398,7 +395,7 @@ public class CursoListar extends javax.swing.JFrame {
         }
 
         if (!excecoes.cursoIsSelected(itemSelecionado)) {
-            
+
             jOptionPane1.showMessageDialog(null, "Nenhum curso Selecionado");
 
             return;
@@ -431,7 +428,7 @@ public class CursoListar extends javax.swing.JFrame {
                 "Confirmação de exclusão",
                 JOptionPane.YES_NO_OPTION
         );
-                        //0 = sim | 1 = não | -1 = nada
+        //0 = sim | 1 = não | -1 = nada
         if (resposta == JOptionPane.YES_OPTION) {
             listaCursos.remove(itemSelecionado);
             tableModel.removeRow(itemSelecionado);
@@ -440,43 +437,41 @@ public class CursoListar extends javax.swing.JFrame {
             resetarSeleçao();
         }
 
-        
-        
+
     }//GEN-LAST:event_btnExcluirActionPerformed
 
     private void btnsalvarAlteracoesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsalvarAlteracoesActionPerformed
 
-       if (excecoes.listIsEmpty(listaCursos)) {
-    jOptionPane1.showMessageDialog(null, "Nenhum curso cadastrado");
-    return;
-}
+        if (excecoes.listIsEmpty(listaCursos)) {
+            jOptionPane1.showMessageDialog(null, "Nenhum curso cadastrado");
+            return;
+        }
 
-if (!excecoes.cursoIsSelected(itemSelecionado)) {
-    jOptionPane1.showMessageDialog(null, "Nenhum curso Selecionado");
-    return;
-}
+        if (!excecoes.cursoIsSelected(itemSelecionado)) {
+            jOptionPane1.showMessageDialog(null, "Nenhum curso Selecionado");
+            return;
+        }
 
-Curso cursoSelecionado = listaCursos.get(itemSelecionado);
+        Curso cursoSelecionado = listaCursos.get(itemSelecionado);
 
-if(!strUtil.isNullOrEmpty(txteditarNome.getText())){//estando o espaçao vazio manter inalterado
-    
-    cursoSelecionado.setNome(txteditarNome.getText());
-}
+        if (!strUtil.isNullOrEmpty(txteditarNome.getText())) {//estando o espaçao vazio manter inalterado
 
-if(!strUtil.isNullOrEmpty(txteditarAlunos.getText())){
+            cursoSelecionado.setNome(txteditarNome.getText());
+        }
 
-   cursoSelecionado.setAlunosMatriculados(Integer.parseInt(txteditarAlunos.getText()));
-}
+        if (!strUtil.isNullOrEmpty(txteditarAlunos.getText())) {
 
+            cursoSelecionado.setAlunosMatriculados(Integer.parseInt(txteditarAlunos.getText()));
+        }
 
-cursoSelecionado.setAtivo(verificarStatusComboBox(cbEditar));
+        cursoSelecionado.setAtivo(verificarStatusComboBox(cbEditar));
 
         editarCurso(cursoSelecionado);//atualizar tanto a tabela como o bd e a lisyta
 
         limparcaixadeTexto();
-        
+
         jFrameEditar.setVisible(false);
-        
+
     }//GEN-LAST:event_btnsalvarAlteracoesActionPerformed
 
     private void btndesfazerPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndesfazerPesquisaActionPerformed

@@ -5,7 +5,7 @@
 package br.com.ifba.curso.Service;
 import br.com.ifba.curso.exceptions.Exceptions;
 import java.util.List;
-import br.com.ifba.curso.dao.dao;
+import br.com.ifba.curso.dao.CursoDaoI;
 import br.com.ifba.curso.entity.Curso;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,10 +16,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CursoService implements CursoServiceI {
     @Autowired
-      private dao cursoDao;
-   
-    @Autowired
-      Exceptions excecoes ;// injeção da clsse criada para uso de exceções
+      private CursoDaoI cursoDao;
+    
+      Exceptions excecoes = new Exceptions();// injeção da clsse criada para uso de exceções
 
     @Override
     public Curso saveCurso(Curso curso)throws RuntimeException {

@@ -19,11 +19,6 @@ public class Curso extends PersistenceEntity {
     @Column(name = "nome", nullable = false)
     private String nome;
 
-   /* @Id 
-   //@GeneratedValue(strategy = GenerationType.AUTO) esta na superclass e ta funcionando normalmente
-    @Column(name = "id", nullable = false, unique = true)
-    private Long id;*/
-
     @Column(name = "status",nullable = false)
     private Boolean ativo = true; // Valor padrão
 

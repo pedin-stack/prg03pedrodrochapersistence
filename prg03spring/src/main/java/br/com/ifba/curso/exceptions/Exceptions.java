@@ -4,7 +4,7 @@
  */
 package br.com.ifba.curso.exceptions;
 
-import br.com.ifba.curso.dao.dao;
+import br.com.ifba.curso.dao.CursoDaoI;
 
 import java.util.List;
 
@@ -17,13 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 //meter um find all em u
-import org.springframework.stereotype.Component;
-
-@Component
 public class Exceptions {
+    
     @Autowired
-    dao dao;
-   
+    CursoDaoI dao;
     Curso curso = new Curso();
     
     public boolean idisEqual(Long id){

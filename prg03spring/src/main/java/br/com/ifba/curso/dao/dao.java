@@ -9,6 +9,7 @@ import jakarta.persistence.TypedQuery;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
+
 @Repository
 public class dao extends GenericDao<Curso> implements CursoDaoI {
 //metodo especifico para curso

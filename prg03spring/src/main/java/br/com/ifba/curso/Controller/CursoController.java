@@ -5,7 +5,7 @@
 package br.com.ifba.curso.Controller;
 import br.com.ifba.curso.entity.Curso;
 import java.util.List;
-import br.com.ifba.curso.Service.CursoService;
+import br.com.ifba.curso.Service.CursoServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 /**
@@ -14,9 +14,8 @@ import org.springframework.stereotype.Controller;
  */
 @Controller
 public class CursoController implements CursoControllerI {
-    
     @Autowired
-    private CursoService cursoService;
+    private CursoServiceI cursoService;
 
     @Override
     public Curso save(Curso curso)throws RuntimeException {// nome,codigo,status e quantidades nao vazios e nao nulos 

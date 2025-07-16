@@ -10,10 +10,9 @@ package br.com.ifba.infrastructure.dao;
  */
 import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import org.springframework.stereotype.Repository;
@@ -21,9 +20,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class GenericDao<T extends PersistenceEntity> implements GenericDaoI<T> {
 
-     @PersistenceContext
-    protected  EntityManager em;
+    @PersistenceContext
+    protected EntityManager em;
 
+   
+    @Transactional
     @Override
     public T save(T entity) {   
         em.getTransaction().begin();
@@ -32,7 +33,7 @@ public class GenericDao<T extends PersistenceEntity> implements GenericDaoI<T> {
        //em.close();
         return entity;
     }
-
+      @Transactional
     @Override
     public T update(T entity) {
     EntityTransaction tx = em.getTransaction();
@@ -42,7 +43,7 @@ public class GenericDao<T extends PersistenceEntity> implements GenericDaoI<T> {
     //em.close();
     return managed;// esta funçao é por que o hibernate não reconhece como já existente, ele pode acabar fazendo um insert em vez de um update.
 }
- 
+   @Transactional
     @Override
       public void delete(T entity) {
         EntityTransaction tx = em.getTransaction();
